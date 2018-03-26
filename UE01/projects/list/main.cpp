@@ -8,26 +8,18 @@ struct Node {
 
 int main()
 {
-	struct Node* node1 = (struct Node*)malloc(sizeof(struct Node));
-	node1->value = 1;
+	struct Node* start = (struct Node*)malloc(sizeof(struct Node));
+	start->value = 1;
+	start->next = (struct Node*)malloc(sizeof(struct Node));
+	start->next->value = 2;
+	start->next->next = (struct Node*)malloc(sizeof(struct Node));
+	start->next->next->value = 3;
+	start->next->next->next = start;
 
-	struct Node* node2 = (struct Node*)malloc(sizeof(struct Node));
-	node2->value = 2;
 
-	struct Node* node3 = (struct Node*)malloc(sizeof(struct Node));
-	node3->value = 3;
+	start = start->next;
 
-	node1->next = node2;
-	node2->next = node3;
-	node3->next = node1;
+	printf("1: %d", start->next->next->value);
 
-	struct Node* reference = node2;
-
-	printf("1: %d", reference->next->next->value);
-
-	free(node1);
-	free(node2);
-	free(node3);
-
-    return EXIT_SUCCESS;
+	return EXIT_SUCCESS;
 }
