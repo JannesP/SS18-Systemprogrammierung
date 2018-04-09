@@ -1,20 +1,35 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 #include "binarySearchTree.h"
 
 char* getLine();
 void meldungUndExit(char* text);
 
+void strToLower(char* str);
+int lengthComp(const char* str1, const char* str2);
+
 int main() {
     Node* tree = create();
     char* line = getLine();
     while (line != NULL) {
-        if (insert(&tree, line, strcmp) != 0) free(line);
+        strToLower(line);
+        if (insert(&tree, line, lengthComp) != 0) free(line);
         line = getLine();
     }
-    print(tree);
+    printLength(tree);
     return EXIT_SUCCESS;
+}
+
+void strToLower(char* str) {
+    for(int i = 0; str[i]; i++){
+        str[i] = (char) tolower(str[i]);
+    }
+}
+
+int lengthComp(const char* str1, const char* str2) {
+    return (int) (strlen(str1) - strlen(str2));
 }
 
 // ------------------------------------------------------------------

@@ -4,9 +4,11 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "binarySearchTree.h"
 
-void Node_visit(Node* node) { printf("%s: %d", node->value, node->count); }
+void Node_visit(Node* node) { printf("%s: %d\n", node->value, node->count); }
+void Node_visit_length(Node* node) { printf("%d: %d\n", (int) strlen(node->value), node->count); }
 
 /**
  * Creates the start of the tree, just for convenience. Will be NULL in any case.
@@ -41,6 +43,14 @@ void print(Node *node) {
         Node_visit(node);
         printf("\n");
         print(node->smaller);
+    }
+}
+
+void printLength(Node *node) {
+    if (node != NULL) {
+        printLength(node->bigger);
+        Node_visit_length(node);
+        printLength(node->smaller);
     }
 }
 

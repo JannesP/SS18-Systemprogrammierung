@@ -32,5 +32,10 @@ int insert(Node** node, char* value, int(*compare)(const char*, const char*));
  * @param start the pointer to the tree structure or a subtree
  */
 void print(Node* node);
+/**
+ * Traverses the tree and visits (prints) every node length.
+ * @param start the pointer to the tree structure or a subtree
+ */
+void printLength(Node *node);
 
 #endif //PROJECT_BINARYSEARCHTREE_H
