@@ -1,0 +1,26 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/localadmin/Schreibtisch/SS18-Systemprogrammierung/UE03/no3/main.c
+stdio.h
+-
+stdlib.h
+-
+time.h
+-
+math.h
+-
+pthread.h
+-
+unistd.h
+-
+SDL/SDL.h
+-
+X11/Xlib.h
+-
+

@@ -1,0 +1,4 @@
+/home/localadmin/Schreibtisch/SS18-Systemprogrammierung/UE03/no1/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/home/localadmin/Schreibtisch/SS18-Systemprogrammierung/UE03/no1/cmake-build-debug/CMakeFiles/edit_cache.dir
+/home/localadmin/Schreibtisch/SS18-Systemprogrammierung/UE03/no1/cmake-build-debug/CMakeFiles/no2.dir
+/home/localadmin/Schreibtisch/SS18-Systemprogrammierung/UE03/no1/cmake-build-debug/CMakeFiles/no1.dir
