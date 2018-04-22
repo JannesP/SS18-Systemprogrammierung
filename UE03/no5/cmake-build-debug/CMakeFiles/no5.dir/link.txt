@@ -1,1 +1,0 @@
-/usr/bin/cc -g   CMakeFiles/no5.dir/main.c.o  -o no5 -lpthread -lSDL -lX11 -lm 
