@@ -28,14 +28,11 @@ typedef struct size {
 
 void initSDLFenster();
 int getZufallsZahl(int von, int bis);
-void* zeichneBlaueQuadrateAnZufaelligerPosition(void* range);
-void* zeichneRoteQuadrateAnZufaelligerPosition(void* range);
-void* zeichneWeisseQuadrateAnZufaelligerPosition(void* range);
 void* zeichneQuadratAnZufaelligerPositionFromGlobal(void* arg);
-void* zeichneQuadratAnZufaelligerPosition(size* range, Uint8 r, Uint8 g, Uint8 b);
 void* startUndSync(void* arg);
+void createThreads(pthread_t* a_threads);
 
-
+void joinThreads(pthread_t* a_threads) ;
 
 // ----------------------------GLOBALS-----------------------------------------
 SDL_Surface *surface;
@@ -100,37 +97,48 @@ void* startUndSync(void* arg)
 
     pthread_t threads[100];
     int i;
-    for(i = sizeof(threads) / sizeof(threads[0]); i > 0; i--)
+
+    pthread_barrier_init(&barrier, NULL, 101);
+    for (i = 45; i > 0; i--)
     {
-        if (pthread_create(&threads[i - 1], NULL, zeichneQuadratAnZufaelligerPositionFromGlobal, NULL) != 0)
+        createThreads(threads);
+        currSize = sizeBlue;
+        pthread_barrier_wait(&barrier);
+        joinThreads(threads);
+
+        createThreads(threads);
+        currSize = sizeWhite;
+        pthread_barrier_wait(&barrier);
+        joinThreads(threads);
+
+        createThreads(threads);
+        currSize = sizeRed;
+        pthread_barrier_wait(&barrier);
+        joinThreads(threads);
+    }
+    free(sizeBlue);
+
+    printf("All squares drawn.\n");
+}
+
+void createThreads(pthread_t* a_threads) {
+    int i;
+    for(i = sizeof(a_threads) / sizeof(a_threads[0]); i > 0; i--)
+    {
+        if (pthread_create(&a_threads[i - 1], NULL, zeichneQuadratAnZufaelligerPositionFromGlobal, NULL) != 0)
         {
             puts("Fehler: pthread_create return code != 0\n");
             exit(EXIT_FAILURE);
         }
     }
-
-    pthread_barrier_init(&barrier, NULL, 101);
-    for (i = 45; i > 0; i--)
-    {
-        int n;
-        currSize = sizeBlue;
-        pthread_barrier_wait(&barrier);
-
-        currSize = sizeWhite;
-        pthread_barrier_wait(&barrier);
-
-        //not right LUL
-        for(n = sizeof(threads) / sizeof(threads[0]); n > 0; n--) {
-            pthread_join(&(threads[n]), NULL);
-        }
-
-        currSize = sizeRed;
-        pthread_barrier_wait(&barrier);
-    }
-
-    printf("All squares drawn.\n");
 }
 
+void joinThreads(pthread_t* a_threads) {
+    int n;
+    for(n = sizeof(a_threads) / sizeof(a_threads[0]); n > 0; n--) {
+        pthread_join((pthread_t) &(a_threads[n]), NULL);
+    }
+}
 // ----------------------------------------------------------------------------
 // SDL-Fenster initialisieren und öffnen
 void initSDLFenster()
@@ -191,6 +199,7 @@ int getZufallsZahl(int von, int bis)
 
 void* zeichneQuadratAnZufaelligerPositionFromGlobal(void* arg)
 {
+    pthread_barrier_wait(&barrier);
     int min = (int)fmin(currSize->height, currSize->width);
     int kantenLaengeQuadrat = min/10;
 
@@ -217,65 +226,5 @@ void* zeichneQuadratAnZufaelligerPositionFromGlobal(void* arg)
             exit(1);
         }
     }
-    return NULL;
-}
-
-void* zeichneQuadratAnZufaelligerPosition(size* range, Uint8 r, Uint8 g, Uint8 b)
-{
-    int min = (int)fmin(range->height, range->width);
-    int kantenLaengeQuadrat = min/10;
-
-    int i;
-    int anzahlQuadrate = 500;
-
-    for(i = 1; i <= anzahlQuadrate; i++)
-    {
-        // Verzögerung in Mikrosekunden:
-        usleep(1000);
-
-        // Quadrat an zufaelliger Position:
-        SDL_Rect r1;
-        r1.x = getZufallsZahl(range->left, range->left + range->width - kantenLaengeQuadrat);
-        r1.y = getZufallsZahl(range->top, range->top + range->height - kantenLaengeQuadrat);
-        r1.w = kantenLaengeQuadrat;
-        r1.h = kantenLaengeQuadrat;
-        SDL_FillRect(surface, &r1, SDL_MapRGB(surface->format, r, g, b));
-
-        // flip double buffer, d.h. anzeigen:
-        if(SDL_Flip(surface) == -1)
-        {
-            puts("initSDLFenster meldet:  SDL_Flip error\n");
-            exit(1);
-        }
-    }
-    return NULL;
-}
-
-// ----------------------------------------------------------------------------
-// thread-function
-void* zeichneBlaueQuadrateAnZufaelligerPosition(void* range)
-{
-    zeichneQuadratAnZufaelligerPosition(range, 0, 0, 255);
-
-    printf("Blaue Quadrate gezeichnet\n");
-
-    return NULL;
-}
-
-void* zeichneRoteQuadrateAnZufaelligerPosition(void* range)
-{
-    zeichneQuadratAnZufaelligerPosition(range, 255, 0, 0);
-
-    printf("Rote Quadrate gezeichnet\n");
-
-    return NULL;
-}
-
-void* zeichneWeisseQuadrateAnZufaelligerPosition(void* range)
-{
-    zeichneQuadratAnZufaelligerPosition(range, 255, 255, 255);
-
-    printf("Weiße Quadrate gezeichnet\n");
-
     return NULL;
 }
