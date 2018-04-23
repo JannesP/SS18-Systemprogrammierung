@@ -97,7 +97,6 @@ void* startUndSync(void* arg)
 
     pthread_t threads[100];
     int i;
-
     pthread_barrier_init(&barrier, NULL, 101);
     for (i = 45; i > 0; i--)
     {
@@ -123,11 +122,11 @@ void* startUndSync(void* arg)
 
 void createThreads(pthread_t* a_threads) {
     int i;
-    for(i = sizeof(a_threads) / sizeof(a_threads[0]); i > 0; i--)
+    for(i = 100; i > 0; i--)
     {
         if (pthread_create(&a_threads[i - 1], NULL, zeichneQuadratAnZufaelligerPositionFromGlobal, NULL) != 0)
         {
-            puts("Fehler: pthread_create return code != 0\n");
+            printf("Fehler: pthread_create return code != 0\n");
             exit(EXIT_FAILURE);
         }
     }
@@ -135,8 +134,8 @@ void createThreads(pthread_t* a_threads) {
 
 void joinThreads(pthread_t* a_threads) {
     int n;
-    for(n = sizeof(a_threads) / sizeof(a_threads[0]); n > 0; n--) {
-        pthread_join((pthread_t) &(a_threads[n]), NULL);
+    for(n = 100; n > 0; n--) {
+        pthread_join((pthread_t) (a_threads[n - 1]), NULL);
     }
 }
 // ----------------------------------------------------------------------------
@@ -199,7 +198,9 @@ int getZufallsZahl(int von, int bis)
 
 void* zeichneQuadratAnZufaelligerPositionFromGlobal(void* arg)
 {
+    printf("thread started and waiting ...\n");
     pthread_barrier_wait(&barrier);
+    printf("thread finished waiting ...\n");
     int min = (int)fmin(currSize->height, currSize->width);
     int kantenLaengeQuadrat = min/10;
 
@@ -218,13 +219,14 @@ void* zeichneQuadratAnZufaelligerPositionFromGlobal(void* arg)
         r1.w = kantenLaengeQuadrat;
         r1.h = kantenLaengeQuadrat;
         SDL_FillRect(surface, &r1, SDL_MapRGB(surface->format, currSize->r, currSize->g, currSize->b));
-
         // flip double buffer, d.h. anzeigen:
         if(SDL_Flip(surface) == -1)
         {
             puts("initSDLFenster meldet:  SDL_Flip error\n");
             exit(1);
         }
+        printf("thread ran to end\n");
     }
+
     return NULL;
 }
